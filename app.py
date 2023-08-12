@@ -5,31 +5,26 @@ import os
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = "uploads"
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    if request.method == "GET":
+        return render_template("index.html")
+    else:
+        if "file" not in request.files:
+            return jsonify({"error": "No file part"})
 
+        file = request.files["file"]
 
-@app.route("/upload-image", methods=["POST"])
-def upload_image():
-    if "file" not in request.files:
-        return jsonify({"error": "No file part"})
+        if file.filename == "":
+            return jsonify({"error": "No selected file"})
 
-    file = request.files["file"]
-
-    if file.filename == "":
-        return jsonify({"error": "No selected file"})
-
-    if file:
-        filename = os.path.join("media", file.filename)
-        file.save(filename)
-        # processed_image = detect_glaucoma(filename)  # Call your image analysis function
-        processed_image = ""  # Call your image analysis function
-        return render_template("index.html", processed_image=processed_image)
+        if file:
+            filename = os.path.join("media", file.filename)
+            file.save(filename)
+            # processed_image = detect_glaucoma(filename)  # Call your image analysis function
+            processed_image = ""  # Call your image analysis function
+            return render_template("index.html", processed_image=processed_image)
 
 
 if __name__ == "__main__":
