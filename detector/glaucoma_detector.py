@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from localization import OD_localization
 from segmentation import optic_segmentation
 from classification import inference_glaucoma
-from supporting_function import *
+from ..supporting_function import *
 from io import BytesIO
 import base64
 
