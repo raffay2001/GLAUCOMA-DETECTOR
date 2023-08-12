@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import os
-from detector.glaucoma_detector import detect_glaucoma
+
+# from detector.glaucoma_detector import detect_glaucoma
 
 app = Flask(__name__)
 
@@ -24,9 +25,10 @@ def upload_image():
         return jsonify({"error": "No selected file"})
 
     if file:
-        filename = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
+        filename = os.path.join("media", file.filename)
         file.save(filename)
-        processed_image = detect_glaucoma(filename)  # Call your image analysis function
+        # processed_image = detect_glaucoma(filename)  # Call your image analysis function
+        processed_image = ""  # Call your image analysis function
         return render_template("index.html", processed_image=processed_image)
 
 
