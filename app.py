@@ -1,7 +1,34 @@
-from flask import Flask
+from flask import Flask, render_template, request, jsonify
+import os
+from detector.glaucoma_detector import detect_glaucoma
 
 app = Flask(__name__)
 
-@app.route("/")
-def main():
-    return "Hello World."
+UPLOAD_FOLDER = "uploads"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+
+@app.route("/", methods=["GET"])
+def index():
+    return render_template("index.html")
+
+
+@app.route("/upload-image", methods=["POST"])
+def upload_image():
+    if "file" not in request.files:
+        return jsonify({"error": "No file part"})
+
+    file = request.files["file"]
+
+    if file.filename == "":
+        return jsonify({"error": "No selected file"})
+
+    if file:
+        filename = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
+        file.save(filename)
+        processed_image = detect_glaucoma(filename)  # Call your image analysis function
+        return render_template("index.html", processed_image=processed_image)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
